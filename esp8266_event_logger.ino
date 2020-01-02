@@ -1,89 +1,80 @@
-// Adafruit IO Publish Example
-//
-// Adafruit invests time and resources providing this open source code.
-// Please support Adafruit and open source hardware by purchasing
-// products from Adafruit!
-//
-// Written by Todd Treece for Adafruit Industries
-// Copyright (c) 2016 Adafruit Industries
-// Licensed under the MIT license.
-//
-// All text above must be included in any redistribution.
+/* Code for logging an event to SimpleLoggingServerToCsvFile */
+/* Inspired by: https://techtutorialsx.com/2016/07/17/esp8266-http-get-requests */
 
-/************************** Configuration ***********************************/
+/* https://github.com/esp8266/Arduino */
+/* Additional board manager URL: https://arduino.esp8266.com/stable/package_esp8266com_index.json */
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+ 
+#define MAX_WL_NOT_CONNECTED 3 
+ 
+const char* ssid = "yourNetworkName";
+const char* password = "yourNetworkPassword";
 
-// edit the config.h tab and enter your Adafruit IO credentials
-// and any additional configuration needed for WiFi, cellular,
-// or ethernet clients.
-#include "config.h"
-
-/************************ Example Starts Here *******************************/
-
-// this int will hold the current count for our sketch
-int count = 0;
-
-// set up the 'counter' feed
-AdafruitIO_Feed *counter = io.feed("PIR 47");
-
-void setup() {
-
-  // start the serial connection
-  Serial.begin(115200);
-
-  // wait for serial monitor to open
-  while(! Serial);
-
-  //Serial.print("Connecting to Adafruit IO");
-
-  // connect to io.adafruit.com
-  io.connect();
-
-  // wait for a connection
-  while(io.status() < AIO_CONNECTED) {
-    //Serial.print(".");
-    delay(500);
-  }
-
-  // we are connected
-  //Serial.println();
-  //Serial.println(io.statusText());
-
-  // send the event
-  send_event(); 
-
-  // sleep until reset
-  ESP.deepSleep(0);
-
-}
-
-void loop()
+/* if DEBUG is defined additional debugging information will be provided on serial */
+#define DEBUG
+ 
+void setup () 
 {
-  /* Empty - One shot application */
+    /* Counter to count failed WIFI connections */
+    int count = 0;
+    #ifdef DEBUG
+    Serial.begin(115200);
+    #endif
+    
+    WiFi.begin(ssid, password);
+ 
+    while (WiFi.status() != WL_CONNECTED) 
+    {
+        count++;
+        if (count >= MAX_WL_NOT_CONNECTED)
+        {
+            /* Go to deep sleep until reset */
+            ESP.deepSleep(0);
+        }
+        else
+        {
+            /* Wait some more */
+            delay(1000);
+            #ifdef DEBUG
+            Serial.print("Connecting - ");
+            Serial.println(count);
+            #endif
+            
+        }    
+    }
 }
-
-void send_event() {
-
-  // io.run(); is required for all sketches.
-  // it should always be present at the top of your loop
-  // function. it keeps the client connected to
-  // io.adafruit.com, and processes any incoming data.
-  //io.run();
-
-  // save count to the 'counter' feed on Adafruit IO
-  //Serial.print("sending -> ");
-  //Serial.println(count);
-  counter->save(count);
-  
-  // write data to AIO
-  io.run();
-  
-
-  // increment the count by 1
-  count++;
-
-  // Adafruit IO is rate limited for publishing, so a delay is required in
-  // between feed->save events. In this example, we will wait three seconds
-  // (1000 milliseconds == 1 second) during each loop.
-  delay(500);
-
-}
+ 
+void loop() 
+{
+    if (WiFi.status() == WL_CONNECTED) 
+    {
+        /* Log event to the server */
+        HTTPClient http;
+         
+        http.begin("http://raspberrypi3.local/q67idhrJ56oQj7IElukH");
+        int httpCode = http.GET();                                                                
+        
+        #ifdef DEBUG    
+        Serial.println(httpCode); 
+        if (httpCode > 0) 
+        { 
+            String response = http.getString();
+            Serial.println(response);
+        }
+        #endif
+        
+        /* Close the connection */
+        http.end();   
+        
+    }
+    else
+    {
+        #ifdef DEBUG    
+        Serial.println("Not connected!");
+        #endif        
+    }
+    
+    /* Go to deep sleep until reset */
+    ESP.deepSleep(0);
+} 
