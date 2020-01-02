@@ -121,7 +121,7 @@ function plotHourRadarChart(tally_hours)
         let line_coordinate = angleToCoordinate(angle, max_tally_hours, radialScale);
         let label_coordinate = angleToCoordinate(angle, 0.9*max_tally_hours, radialScale);
 
-        //draw axis line
+        //draw axis line 
         svg.append("line")
         .attr("x1", 300)
         .attr("y1", 300)
