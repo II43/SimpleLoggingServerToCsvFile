@@ -14,7 +14,9 @@ MASTER_KEY: Key that restart the logging <br>
 
 Note that keys is just a identifer. Not a cryptographic key, just random sequence of numbers and letters. <br><br>
 
-<u>Statistics by hour</u><br>
+<b>Statistics by hour</b><br>
+======
 The <b>charthour.html</b> shows event statistics by hour of the day in a form or clock spider plot.
 
-Examples
+<b>Examples>/b><br>
+======
