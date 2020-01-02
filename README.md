@@ -18,5 +18,5 @@ Note that keys is just a identifer. Not a cryptographic key, just random sequenc
 ======
 The <b>charthour.html</b> shows event statistics by hour of the day in a form or clock spider plot.
 
-<b>Examples>/b><br>
+<b>Getting started</b><br>
 ======
