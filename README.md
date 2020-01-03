@@ -10,9 +10,9 @@ There is a configuration section in this script allowing to adjust:
 
 <table>
 <tr><th>Parameter</th><th>Description</th><th>Default value</th?</tr>
-<tr><td>LOG_FILE</td><td>Name of the CSV file for storing the event</td><td>sevents.log</td></tr>
+<tr><td>LOG_FILE</td><td>Name of the CSV file for storing the events</td><td>events.log</td></tr>
 <tr><td>KEYS</td><td>Set of keys that are allowed to be logged</td><td>q67idhrJ56oQj7IElukH</td></tr>
-<tr><td>MASTER_KEY</td><td>Key that restart the logging</td><td>jQw5xZVq9Kp4fm7hiZko</td></tr>
+<tr><td>MASTER_KEY</td><td>Key that restarts the logging</td><td>jQw5xZVq9Kp4fm7hiZko</td></tr>
 </table>
 
 
@@ -26,7 +26,7 @@ The <b>charthour.html</b> shows event statistics by hour of the day in a form or
 ======
 <ol>
 <li>Start the SimpleLoggingServerToCsvFile server using Python</li>
-<li>Access the key to log an event:   <span style="color:blue">**http://localhost:8080/jQw5xZVq9Kp4fm7hiZko**</span></li>
+<li>Access the key to log an event: <http://localhost:8080/jQw5xZVq9Kp4fm7hiZko></li>
 <li>Access the master key to reset the logger:   <span style="color:blue">**http://localhost:8080/q67idhrJ56oQj7IElukH**</span></li>
 <li>To view the spider plot:   <span style="color:blue">**http://localhost:8080/charthour.html**</span></li>
 </ol>
