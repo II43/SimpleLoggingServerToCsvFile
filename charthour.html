@@ -5,9 +5,12 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
 <body>
+<p style = "font-family:Helvetica;font-size:14px;">
+Last event logged at <span id="lasttimestamp"></span>
+</p>
 <div id="charthour"></div>
 <br><br>
-<p style = "font-family:Helvetica;font-size:12px;">
+<p style = "font-family:Helvetica;font-size:14px;">
 This chart shows shows event statistics by hour of the day in a form or clock spider plot.<br>
 The day time data (7 AM to 6 PM) are shown in <font color="#CD5C5C">red</font>. The night time (7 PM to 6 AM) in <font color="#1E90FF">blue</font>.
 <!-- Colors definitions: https://en.wikipedia.org/wiki/Web_colors -->
@@ -29,6 +32,17 @@ d3.csv("./events.log").then(function(data) {
         var hour = parseInt(extractHour(ct));
         tally_dates[date] = (tally_dates[date]||0) + 1;
         tally_hours[hour] = (tally_hours[hour]||0) + 1;
+        
+        /* Extract last time stamp */
+        if (i == data.length - 1) 
+        {
+            let idxlast = i;
+            while (data[idxlast].Timestamp === "") idxlast--;    
+            var paragraphTimestamp = document.getElementById("lasttimestamp");
+            paragraphTimestamp.textContent += data[idxlast].Timestamp;
+            paragraphTimestamp.style.fontWeight = "bold";
+        }
+        
     }
     
     /* Fill other with zeros */
