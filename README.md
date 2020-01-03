@@ -27,7 +27,8 @@ The <b>charthour.html</b> shows event statistics by hour of the day in a form or
 <ol>
 <li>Start the SimpleLoggingServerToCsvFile server using Python</li>
 <li>Access the key to log an event:
-<div class="text-purple">http://localhost:8080/jQw5xZVq9Kp4fm7hiZko</div></li>
+*http://localhost:8080/jQw5xZVq9Kp4fm7hiZko*
+</li>
 <li>Access the master key to reset the logger:
 <div class="text-purple">http://localhost:8080/q67idhrJ56oQj7IElukH</div></li>
 <li>To view the spider plot:
