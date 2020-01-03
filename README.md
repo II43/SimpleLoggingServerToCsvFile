@@ -25,13 +25,14 @@ The <b>charthour.html</b> shows event statistics by hour of the day in a form or
 <b>Getting started</b><br>
 ======
 <ol>
-<li>Start the SimpleLoggingServerToCsvFile server using Python</li>
+<li>Start the SimpleLoggingServerToCsvFile server using Python:
+<div>python SimpleLoggingServerToCsvFile.py 8080</div></li>
 <li>Access the key to log an event:
-*http://localhost:8080/jQw5xZVq9Kp4fm7hiZko*
-</li>
+<div>http://localhost:8080/jQw5xZVq9Kp4fm7hiZko</div></li>
 <li>Access the master key to reset the logger:
-<div class="text-purple">http://localhost:8080/q67idhrJ56oQj7IElukH</div></li>
+<div>http://localhost:8080/q67idhrJ56oQj7IElukH</div></li>
 <li>To view the spider plot:
-<div class="text-purple">http://localhost:8080/charthour.html</div></li>
-</ol>
+<div>http://localhost:8080/charthour.html</div></li>
+<br>
  :+1:
+</ol>
