@@ -23,6 +23,8 @@ import csv
 
 from os import curdir, sep, path
 
+from shutil import copyfile
+
 
 #----------------------------------------------------------------------#
 # Configuration                                                        #
@@ -91,6 +93,8 @@ class S(BaseHTTPRequestHandler):
                 # If master key is received, logger file is replaced with new one
                 if received_key == MASTER_KEY:
                     method_to_log = 'w'
+                    # Back the logger file
+                    copyfile(LOG_FILE, LOG_FILE + ".backup")     
                 else:
                     method_to_log = 'a'
                 
