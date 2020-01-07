@@ -127,16 +127,16 @@ function plotHourRadarChart(tally_hours)
     }
     
     /* Draw background */
-    ticks.forEach(t =>
-        svg.append("circle")
+    /* Big circle */
+    svg.append("circle")
         .attr("cx", 300)
         .attr("cy", 300)
         .attr("fill", "none")
         .attr("stroke", "#F5F5F5")
         .attr("stroke-width", 3)
-        .attr("r", radialScale(t))
-    );
-
+        .attr("r", radialScale(max_tally_hours));
+    
+    /*
     ticks.forEach(t =>
         svg.append("text")
         .attr("x", 300)
@@ -146,7 +146,7 @@ function plotHourRadarChart(tally_hours)
         .attr("size",80)
         .text(t.toString())
     );
-    
+    */
     
     /* Using night to create ticks */
     var nighthours = Object.keys(tally_hours_night)
@@ -164,7 +164,17 @@ function plotHourRadarChart(tally_hours)
         .attr("x2", line_coordinate.x)
         .attr("y2", line_coordinate.y)
         .attr("stroke","#F5F5F5");
-
+        /*
+        .on("mouseover", function() 
+        {
+            d3.select(this).attr("stroke", "red");
+        })
+        .on("mouseout", function() 
+        {
+            d3.select(this).attr("stroke", "#F5F5F5");
+        });
+        */
+        
         //draw axis label
         /*
         svg.append("text")
@@ -172,7 +182,62 @@ function plotHourRadarChart(tally_hours)
         .attr("y", label_coordinate.y)
         .text(hours[i]);
         */
+        
+        svg.append("text")
+        .attr("x", label_coordinate.x)
+        .attr("y", label_coordinate.y)
+        .attr("fill","#E0E0E0")
+        .attr("family","Helvetica")
+        .attr("font-size","40px")
+        .attr("text-anchor","middle")
+        .attr("font-weight", "bold")
+        .attr("dy", "0.3em")
+        .text(i ? i.toString() : "12");
+        
+        
+        // Arc
+        /*
+        var arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(radialScale(max_tally_hours))
+            .startAngle(angle) //convert from degs to radians
+            .endAngle(angle + (2*Math.PI)/nighthours.length);
+
+        svg.append("path")
+            .attr("d", arc)
+            .attr("fill", "blue")
+            .attr("transform", "translate(300,300)")
+            .on("mouseover", function() 
+            {
+                d3.select(this).attr("fill", "red");
+            })
+            .on("mouseout", function() 
+            {
+                d3.select(this).attr("fill", "white");
+            });
+        */
+        
     }
+    
+    /* Small circle */
+    svg.append("circle")
+        .attr("cx", 300)
+        .attr("cy", 300)
+        .attr("fill", "white")
+        .attr("stroke", "#F5F5F5")
+        .attr("stroke-width", 3)
+        .attr("r", 35);
+    
+    svg.append("text")
+        .attr("x", 300)
+        .attr("y", 300)
+        .attr("fill","black")
+        .attr("family","Helvetica")
+        .attr("font-size","20px")
+        .attr("text-anchor","middle")
+        .attr("font-weight", "bold")
+        .attr("dy", "0.3em")
+        .text(max_tally_hours.toString());
     
     /* Spider - Night (7 PM to 6 AM) */
     let coordinates_night = getPathCoordinates(tally_hours_night, nighthours, radialScale);
