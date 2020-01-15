@@ -1,0 +1,58 @@
+<html>
+<body>
+Hello
+<p id="output"></p>
+<script>
+var quiz = [
+	/* Question 1 */
+	{"question": "Number 1",
+   	"wrong_answer": [
+		"a1",
+		"b1",
+		"c1"],
+	"correct_answer": "d1"},
+
+	/* Question 2 */
+	{"question": "Number 2",
+	"wrong_answer": [
+		"a2",
+		"b2",
+		"c2"],
+	"correct_answer": "d2"}
+	];
+
+quiz.forEach(output2html);
+
+function output2html(item, index)
+{
+	document.getElementById("output").innerHTML += item["question"] + "<br>";
+	var answers = [item["correct_answer"], ...item["wrong_answer"]];
+	var order = [0,1,2,3];
+	shuffle(order);
+	
+	for (var i = 0; i < answers.length; i++)
+	{
+		var idx = order.findIndex(val => val == i);
+		if (!idx)
+		{
+			document.getElementById("output").innerHTML += "<b>" + answers[idx] + "</b><br>";
+		}
+		else
+		{
+			document.getElementById("output").innerHTML += answers[idx] + "<br>";
+		}
+	}
+}
+
+function shuffle(array)
+{
+	for (var i = 0; i < array.length; i++)
+	{
+		var j = Math.floor(Math.random() * array.length);
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+      
+</script>
+</body>
+</html>
