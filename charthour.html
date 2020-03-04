@@ -12,7 +12,7 @@ Last event logged at <span id="lasttimestamp"></span>
 <br><br>
 <p style = "font-family:Helvetica;font-size:14px;">
 This chart shows shows event statistics by hour of the day in a form or clock spider plot.<br>
-The day time data (7 AM to 6 PM) are shown in <font color="#CD5C5C">red</font>. The night time (7 PM to 6 AM) in <font color="#1E90FF">blue</font>.
+The day time data (12 - 24, PM) are shown in <font color="#CD5C5C">red</font>. The night time (0 - 12 , AM) in <font color="#1E90FF">blue</font>.
 <!-- Colors definitions: https://en.wikipedia.org/wiki/Web_colors -->
 </p>
 <script>
@@ -57,20 +57,20 @@ d3.csv("./events.log").then(function(data) {
   });
 
 
-function angleToCoordinate(angle, value, radialScale)
+function angleToCoordinate(angle, value, radialScale, center)
 {
     let x = Math.cos(angle) * radialScale(value);
     let y = Math.sin(angle) * radialScale(value);
-    return {"x": 300 - x, "y": 300 - y};
+    return {"x": center - x, "y": center - y};
 }
 
-function getPathCoordinates(data_point, hours, radialScale)
+function getPathCoordinates(data_point, hours, radialScale, center)
 {
     let coordinates = [];
     for (var i = 0; i < hours.length; i++){
         let h = hours[i];
         let angle = (Math.PI / 2) + (2 * Math.PI * i / hours.length);
-        coordinates.push(angleToCoordinate(angle, data_point[h], radialScale));
+        coordinates.push(angleToCoordinate(angle, data_point[h], radialScale, center));
     }
     return coordinates;
 }
@@ -88,15 +88,20 @@ function plotHourRadarChart(tally_hours)
     
     /* Plot the spider plot */
     /* Inspired by: https://yangdanny97.github.io/blog/2019/03/01/D3-Spider-Chart */
-       
+    /* Inspired by: http://benalexkeen.com/creating-graphs-using-flask-and-d3/ */ 
+    
+    /* Figure proportions */
+    var svgWidth = window.innerWidth * 0.9;
+    var svgCenter = svgWidth / 2;  
+
     let svg = d3.select("#charthour").append("svg")
-        .attr("width", 600)
-        .attr("height", 600);
+        .attr("width", svgWidth)
+        .attr("height", svgWidth);
     
 
     let radialScale = d3.scaleLinear()
         .domain([0,max_tally_hours])
-        .range([0,250]);
+        .range([0,0.9 * svgCenter]);
     let ticks = [max_tally_hours];
 
     
@@ -105,7 +110,7 @@ function plotHourRadarChart(tally_hours)
     
     for (var i = 0; i < hours.length; i++) 
     { 
-        if (i > 6 && i < 19)
+        if (i >= 0 && i < 12)
         {
             delete tally_hours_night[i];
             if (i >= 12)
@@ -129,8 +134,8 @@ function plotHourRadarChart(tally_hours)
     /* Draw background */
     /* Big circle */
     svg.append("circle")
-        .attr("cx", 300)
-        .attr("cy", 300)
+        .attr("cx", svgCenter)
+        .attr("cy", svgCenter)
         .attr("fill", "none")
         .attr("stroke", "#F5F5F5")
         .attr("stroke-width", 3)
@@ -139,8 +144,8 @@ function plotHourRadarChart(tally_hours)
     /*
     ticks.forEach(t =>
         svg.append("text")
-        .attr("x", 300)
-        .attr("y", 300 - radialScale(t) - 10)
+        .attr("x", svgCenter)
+        .attr("y", svgCenter - radialScale(t) - 10)
         .attr("fill","#778899") // LightSlateGray
         .attr("family","Helvetica")
         .attr("size",80)
@@ -154,13 +159,13 @@ function plotHourRadarChart(tally_hours)
     for (var i = 0; i < nighthours.length; i++) 
     {
         let angle = (Math.PI / 2) + (2 * Math.PI * i / nighthours.length);
-        let line_coordinate = angleToCoordinate(angle, max_tally_hours, radialScale);
-        let label_coordinate = angleToCoordinate(angle, 0.9*max_tally_hours, radialScale);
+        let line_coordinate = angleToCoordinate(angle, max_tally_hours, radialScale, svgCenter);
+        let label_coordinate = angleToCoordinate(angle, 0.9*max_tally_hours, radialScale, svgCenter);
 
         //draw axis line 
         svg.append("line")
-        .attr("x1", 300)
-        .attr("y1", 300)
+        .attr("x1", svgCenter)
+        .attr("y1", svgCenter)
         .attr("x2", line_coordinate.x)
         .attr("y2", line_coordinate.y)
         .attr("stroke","#F5F5F5");
@@ -206,7 +211,7 @@ function plotHourRadarChart(tally_hours)
         svg.append("path")
             .attr("d", arc)
             .attr("fill", "blue")
-            .attr("transform", "translate(300,300)")
+            .attr("transform", "translate("+svgCenter+","+svgCenter+")")
             .on("mouseover", function() 
             {
                 d3.select(this).attr("fill", "red");
@@ -221,16 +226,16 @@ function plotHourRadarChart(tally_hours)
     
     /* Small circle */
     svg.append("circle")
-        .attr("cx", 300)
-        .attr("cy", 300)
+        .attr("cx", svgCenter)
+        .attr("cy", svgCenter)
         .attr("fill", "white")
         .attr("stroke", "#F5F5F5")
         .attr("stroke-width", 3)
         .attr("r", 35);
     
     svg.append("text")
-        .attr("x", 300)
-        .attr("y", 300)
+        .attr("x", svgCenter)
+        .attr("y", svgCenter)
         .attr("fill","black")
         .attr("family","Helvetica")
         .attr("font-size","20px")
@@ -239,8 +244,8 @@ function plotHourRadarChart(tally_hours)
         .attr("dy", "0.3em")
         .text(max_tally_hours.toString());
     
-    /* Spider - Night (7 PM to 6 AM) */
-    let coordinates_night = getPathCoordinates(tally_hours_night, nighthours, radialScale);
+    /* Spider - Night (0 - 12, AM) */
+    let coordinates_night = getPathCoordinates(tally_hours_night, nighthours, radialScale, svgCenter);
     
     let line = d3.line()
         .x(d => d.x)
@@ -256,8 +261,8 @@ function plotHourRadarChart(tally_hours)
     .attr("stroke-opacity", 1)
     .attr("opacity", 0.5);  
     
-    /* Spider - Day (7 AM to 6 PM) */
-    let coordinates_day = getPathCoordinates(tally_hours_day, nighthours, radialScale);
+    /* Spider - Day (12 - 24, PM) */
+    let coordinates_day = getPathCoordinates(tally_hours_day, nighthours, radialScale, svgCenter);
         
     //draw the path element
     svg.append("path")
